@@ -1,33 +1,39 @@
-import os
-
-from dotenv import load_dotenv
-from openai import OpenAI
-
-load_dotenv()
+from dotenv import dotenv_values
+from langchain_openai import ChatOpenAI
+from pydantic import BaseModel, SecretStr
 
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-)
+class AgentMessage(BaseModel):
+    content: str
+
+
+def get_llm_message(llm: ChatOpenAI) -> AgentMessage:
+    llm_message = llm.invoke("What does our company policy say?")
+
+    return AgentMessage.model_validate(llm_message)
 
 
 def main() -> None:
-    completion = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a company chatbot",
-            },
-            {
-                "role": "user",
-                "content": "What does our company policy say?",
-            },
-        ],
+    class EnvVars(BaseModel):
+        OPENAI_API_KEY: SecretStr
+
+    validated_env_vars = EnvVars.model_validate(
+        dotenv_values(
+            dotenv_path=".env",
+        ),
+    )
+
+    llm = ChatOpenAI(
+        model="gpt-4o-mini-2024-07-18",
+        api_key=validated_env_vars.OPENAI_API_KEY,
+    )
+
+    llm_message = get_llm_message(
+        llm=llm,
     )
 
     print(
-        completion.choices[0].message.content,
+        llm_message.content,
     )
 
 
