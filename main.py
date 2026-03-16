@@ -23,9 +23,7 @@ def main() -> None:
         OPENAI_API_KEY: SecretStr
 
     validated_env_vars = EnvVars.model_validate(
-        dotenv_values(
-            dotenv_path=".env",
-        ),
+        dotenv_values(dotenv_path=".env"),
     )
 
     llm = ChatOpenAI(
@@ -33,9 +31,7 @@ def main() -> None:
         api_key=validated_env_vars.OPENAI_API_KEY,
     )
 
-    llm_message = get_llm_message(
-        llm=llm,
-    )
+    llm_message = get_llm_message(llm)
 
     print(
         llm_message.content,
