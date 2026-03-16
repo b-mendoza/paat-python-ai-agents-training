@@ -2,6 +2,8 @@ from dotenv import dotenv_values
 from langchain.chat_models import BaseChatModel, init_chat_model
 from pydantic import BaseModel, SecretStr
 
+ENV_VARS_FILE_PATH = ".env"
+
 
 class AgentMessage(BaseModel):
     content: str
@@ -24,7 +26,7 @@ def main() -> None:
         OPENAI_API_KEY: SecretStr
 
     validated_env_vars = EnvVars.model_validate(
-        dotenv_values(dotenv_path=".env")
+        dotenv_values(dotenv_path=ENV_VARS_FILE_PATH)
     )
 
     llm = init_chat_model(
