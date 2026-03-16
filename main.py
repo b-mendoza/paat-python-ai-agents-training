@@ -1,7 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
+from langchain.chat_models import BaseChatModel, init_chat_model
 from pydantic import BaseModel, SecretStr
 
 
@@ -9,15 +9,15 @@ class AgentMessage(BaseModel):
     content: str
 
 
-def get_llm_message(llm: ChatOpenAI) -> AgentMessage:
-    structured_llm_message = llm.with_structured_output(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType] `with_structured_output()` returns `Runnable[..., _DictOrPydantic]`, but `_DictOrPydantic` uses a TypeVar (`_BM`) that Pyright can't resolve here.
+def get_llm_message(llm: BaseChatModel) -> AgentMessage:
+    structured_llm_message = llm.with_structured_output(
         schema=AgentMessage,
         method="json_schema",
     )
 
     return structured_llm_message.invoke(
         input="What does our company policy say?",
-    )  # pyright: ignore[reportReturnType, reportUnknownVariableType] `.invoke()` returns `AgentMessage` at runtime, but Pyright sees it as `dict | BaseModel` (the `_DictOrPydantic` alias), so it won't match our `-> AgentMessage` return type.
+    )  # pyright: ignore[reportReturnType] `.invoke()` returns `AgentMessage` at runtime, but Pyright sees it as `dict | BaseModel` (the `_DictOrPydantic` alias), so it won't match our `-> AgentMessage` return type.
 
 
 def main() -> None:
@@ -36,9 +36,8 @@ def main() -> None:
         os.environ,
     )
 
-    llm = ChatOpenAI(
+    llm = init_chat_model(
         model="gpt-4o-mini-2024-07-18",
-        api_key=_validated_env_vars.OPENAI_API_KEY,
     )
 
     llm_message = get_llm_message(llm)
