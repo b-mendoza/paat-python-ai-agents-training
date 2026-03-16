@@ -41,34 +41,3 @@ enable_error_code = [
     "truthy-iterable",     # suspicious iterable truthiness checks
     "unused-awaitable",    # awaitables created but never used/awaited
 ]
-
-[tool.ruff]
-# Python version Ruff should assume.
-target-version = "py312"
-
-[tool.ruff.format]
-# Format code examples inside docstrings.
-docstring-code-format = true
-
-[tool.ruff.lint]
-# Rule families to enable.
-select = [
-    "E",   # pycodestyle errors
-    "F",   # pyflakes
-    "I",   # import sorting
-    "B",   # bugbear
-    "UP",  # pyupgrade
-    "SIM", # simplify
-    "RUF", # ruff-native rules
-    "A",   # builtin shadowing
-    "C4",  # comprehensions
-    "DTZ", # datetime/timezone issues
-    "ICN", # import conventions
-    "PIE", # miscellaneous improvements
-    "PT",  # pytest style
-    "RET", # return cleanup
-    "TC",  # type-checking imports
-]
-
-# Report unused imports, but don't auto-delete them on fix.
-unfixable = ["F401"]
