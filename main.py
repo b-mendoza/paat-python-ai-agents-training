@@ -1,4 +1,6 @@
-from dotenv import dotenv_values
+import os
+
+from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, SecretStr
 
@@ -19,16 +21,24 @@ def get_llm_message(llm: ChatOpenAI) -> AgentMessage:
 
 
 def main() -> None:
+
+    has_loaded_env_vars = load_dotenv(dotenv_path=".env")
+
+    if not has_loaded_env_vars:
+        raise RuntimeError(
+            'Failed to load environment variables from ".env" file',
+        )
+
     class EnvVars(BaseModel):
         OPENAI_API_KEY: SecretStr
 
-    validated_env_vars = EnvVars.model_validate(
-        dotenv_values(dotenv_path=".env"),
+    _validated_env_vars = EnvVars.model_validate(
+        os.environ,
     )
 
     llm = ChatOpenAI(
         model="gpt-4o-mini-2024-07-18",
-        api_key=validated_env_vars.OPENAI_API_KEY,
+        api_key=_validated_env_vars.OPENAI_API_KEY,
     )
 
     llm_message = get_llm_message(llm)
