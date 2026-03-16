@@ -8,9 +8,14 @@ class AgentMessage(BaseModel):
 
 
 def get_llm_message(llm: ChatOpenAI) -> AgentMessage:
-    llm_message = llm.invoke("What does our company policy say?")
+    structured_llm_message = llm.with_structured_output(
+        schema=AgentMessage,
+        method="json_schema",
+    )
 
-    return AgentMessage.model_validate(llm_message)
+    return structured_llm_message.invoke(
+        "What does our company policy say?",
+    )
 
 
 def main() -> None:
