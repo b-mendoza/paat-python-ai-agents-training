@@ -8,8 +8,35 @@ dependencies = []
 
 [dependency-groups]
 # Development tools:
+# - mypy: static type checking
 # - ruff: linting and formatting
-dev = ["ruff==0.15.5"]
+dev = ["mypy==1.19.1", "ruff==0.15.5"]
+
+[tool.mypy]
+# Import/type resolution
+ignore_missing_imports = false
+
+# Inference / output quality
+local_partial_types = true
+pretty = true
+python_version = "3.12"
+show_error_codes = true
+
+# Strictness
+strict = true
+warn_unreachable = true
+
+# Extra opt-in checks
+enable_error_code = [
+    "deprecated",          # deprecated APIs
+    "explicit-override",   # require @override on overrides
+    "ignore-without-code", # require specific ignore codes
+    "possibly-undefined",  # possibly undefined names
+    "redundant-expr",      # redundant boolean/logic expressions
+    "truthy-bool",         # suspicious truthiness checks
+    "truthy-iterable",     # suspicious iterable truthiness checks
+    "unused-awaitable",    # awaitables created but never used/awaited
+]
 
 [tool.ruff]
 # Python version Ruff should assume.
