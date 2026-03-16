@@ -14,7 +14,7 @@ def get_llm_message(llm: ChatOpenAI) -> AgentMessage:
     )
 
     return structured_llm_message.invoke(
-        "What does our company policy say?",
+        input="What does our company policy say?",
     )  # pyright: ignore[reportReturnType, reportUnknownVariableType] `.invoke()` returns `AgentMessage` at runtime, but Pyright sees it as `dict | BaseModel` (the `_DictOrPydantic` alias), so it won't match our `-> AgentMessage` return type.
 
 
